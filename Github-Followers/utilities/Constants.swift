@@ -10,6 +10,9 @@ import Foundation
 struct Constants{
     
     static let LOGO="gh-logo"
+    static let BASE_URL="http://api.github.com/users"
+//https://api.github.com/users/USERNAME/followers
+   // https://api.github.com/users/El-Attar1234
 }
 
 

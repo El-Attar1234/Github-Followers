@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D25585BA2628DBC200EC7725 /* CustomFollowerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25585B92628DBC200EC7725 /* CustomFollowerImage.swift */; };
+		D25585BC2628DC0C00EC7725 /* FollowerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25585BB2628DC0C00EC7725 /* FollowerCollectionViewCell.swift */; };
+		D258DF492628898600CE501D /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D258DF482628898600CE501D /* NetworkManager.swift */; };
+		D258DF4B2628A89E00CE501D /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D258DF4A2628A89E00CE501D /* ErrorMessage.swift */; };
 		D25BFD582624E5A0000A2A0E /* MyCustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25BFD572624E5A0000A2A0E /* MyCustomButton.swift */; };
 		D25BFD5A2624E82F000A2A0E /* MyCustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25BFD592624E82F000A2A0E /* MyCustomTextField.swift */; };
 		D25BFD5C2624FD2E000A2A0E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25BFD5B2624FD2E000A2A0E /* Constants.swift */; };
@@ -26,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D25585B92628DBC200EC7725 /* CustomFollowerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFollowerImage.swift; sourceTree = "<group>"; };
+		D25585BB2628DC0C00EC7725 /* FollowerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerCollectionViewCell.swift; sourceTree = "<group>"; };
+		D258DF482628898600CE501D /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		D258DF4A2628A89E00CE501D /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		D25BFD572624E5A0000A2A0E /* MyCustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomButton.swift; sourceTree = "<group>"; };
 		D25BFD592624E82F000A2A0E /* MyCustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomTextField.swift; sourceTree = "<group>"; };
 		D25BFD5B2624FD2E000A2A0E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -57,6 +65,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D258DF472628895A00CE501D /* managers */ = {
+			isa = PBXGroup;
+			children = (
+				D258DF482628898600CE501D /* NetworkManager.swift */,
+			);
+			path = managers;
+			sourceTree = "<group>";
+		};
 		D25C063D2624AAFB00B4A2B6 /* ui */ = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +90,8 @@
 				D25BFD592624E82F000A2A0E /* MyCustomTextField.swift */,
 				D2A230602625DB800033F67C /* CustomTitleLabel.swift */,
 				D2A230622625DB930033F67C /* customBodyLabel.swift */,
+				D25585B92628DBC200EC7725 /* CustomFollowerImage.swift */,
+				D25585BB2628DC0C00EC7725 /* FollowerCollectionViewCell.swift */,
 			);
 			path = reusable_components;
 			sourceTree = "<group>";
@@ -83,6 +101,7 @@
 			children = (
 				D271BDDF2625E8E60007EF81 /* extentions */,
 				D25BFD5B2624FD2E000A2A0E /* Constants.swift */,
+				D258DF4A2628A89E00CE501D /* ErrorMessage.swift */,
 			);
 			path = utilities;
 			sourceTree = "<group>";
@@ -119,6 +138,7 @@
 		D271BDE0262630E90007EF81 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				D258DF472628895A00CE501D /* managers */,
 				D271BDE1262630F00007EF81 /* model */,
 			);
 			path = data;
@@ -237,12 +257,16 @@
 				D2A230632625DB930033F67C /* customBodyLabel.swift in Sources */,
 				D271BDDC2625E3D10007EF81 /* UIViewController+Extensions.swift in Sources */,
 				D25C063F2624AB1800B4A2B6 /* SearchVC.swift in Sources */,
+				D25585BC2628DC0C00EC7725 /* FollowerCollectionViewCell.swift in Sources */,
 				D25C06412624AB2D00B4A2B6 /* FavouritesVC.swift in Sources */,
 				D25BFD5A2624E82F000A2A0E /* MyCustomTextField.swift in Sources */,
+				D25585BA2628DBC200EC7725 /* CustomFollowerImage.swift in Sources */,
 				D2A230612625DB800033F67C /* CustomTitleLabel.swift in Sources */,
 				D25BFD5E26250EA0000A2A0E /* FollowersVC.swift in Sources */,
 				D2A615DD2623C543003A524F /* AppDelegate.swift in Sources */,
 				D2A230652625DC300033F67C /* AlertVC.swift in Sources */,
+				D258DF4B2628A89E00CE501D /* ErrorMessage.swift in Sources */,
+				D258DF492628898600CE501D /* NetworkManager.swift in Sources */,
 				D2A615DF2623C543003A524F /* SceneDelegate.swift in Sources */,
 				D25BFD5C2624FD2E000A2A0E /* Constants.swift in Sources */,
 			);
