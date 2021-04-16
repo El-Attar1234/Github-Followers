@@ -11,6 +11,8 @@ import UIKit
 class FollowersVC: UIViewController {
     var username: String!
     var followerCollectionView:UICollectionView!
+    enum Section {case main}
+     var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
     var myFollowers=[Follower]()
     
     
@@ -19,7 +21,7 @@ class FollowersVC: UIViewController {
         configureFollowersCollectionView()
         configureVC()
         getFollowers()
-        self.title="dddd"
+      configureDataSource()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -36,9 +38,7 @@ class FollowersVC: UIViewController {
             switch result{
             case .success(let followers):
                 self.myFollowers=followers
-                DispatchQueue.main.async {
-                    self.followerCollectionView.reloadData()
-                }
+                self.updateData()
             case .failure(let error):
                 self.presentGFAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "OK")
                 
@@ -46,8 +46,46 @@ class FollowersVC: UIViewController {
     }
     
 }
+extension FollowersVC{
+    private func configureFollowersCollectionView(){
+        followerCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
+            view.addSubview(followerCollectionView)
+            followerCollectionView.backgroundColor = .systemBackground
+        followerCollectionView.register(FollowerCollectionViewCell.self, forCellWithReuseIdentifier: FollowerCollectionViewCell.reuseID)
+        }
+        
+        
+    /*    func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
+            let width                       = view.bounds.width
+            let padding: CGFloat            = 12
+            let minimumItemSpacing: CGFloat = 10
+            let availableWidth              = width - (padding * 2) - (minimumItemSpacing * 2)
+            let itemWidth                   = availableWidth / 3
+            
+            let flowLayout                  = UICollectionViewFlowLayout()
+            flowLayout.sectionInset         = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+            flowLayout.itemSize             = CGSize(width: itemWidth, height: itemWidth + 40)
+            
+            return flowLayout
+        }*/
+    func configureDataSource() {
+               dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: followerCollectionView, cellProvider: { (collectionView, indexPath, follower) -> UICollectionViewCell? in
+                   let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCollectionViewCell.reuseID, for: indexPath) as! FollowerCollectionViewCell
+                   cell.set(follower: follower)
+                   return cell
+               })
+           }
+           
+           
+           func updateData() {
+               var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
+               snapshot.appendSections([.main])
+               snapshot.appendItems(myFollowers)
+               DispatchQueue.main.async { self.dataSource.apply(snapshot, animatingDifferences: true) }
+           }
+}
 
-extension FollowersVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
+/*extension FollowersVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     private func configureFollowersCollectionView(){
         let flowLayout                         = UICollectionViewFlowLayout()
         followerCollectionView                 =  UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
@@ -77,4 +115,4 @@ extension FollowersVC:UICollectionViewDelegate,UICollectionViewDataSource,UIColl
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 70)
     }
-}
+}*/
