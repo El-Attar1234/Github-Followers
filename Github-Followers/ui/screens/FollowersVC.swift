@@ -1,118 +1,154 @@
-//
-//  FollowersVC.swift
-//  Github-Followers
-//
-//  Created by Mahmoud Elattar on 4/12/21.
-//  Copyright © 2021 ITI. All rights reserved.
-//
-
-import UIKit
-
-class FollowersVC: UIViewController {
-    var username: String!
-    var followerCollectionView:UICollectionView!
-    enum Section {case main}
-     var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
-    var myFollowers=[Follower]()
+    //
+    //  FollowersVC.swift
+    //  Github-Followers
+    //
+    //  Created by Mahmoud Elattar on 4/12/21.
+    //  Copyright © 2021 ITI. All rights reserved.
+    //
     
+    import UIKit
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureFollowersCollectionView()
-        configureVC()
-        getFollowers()
-      configureDataSource()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: true)
+    class FollowersVC: UIViewController {
+        var username: String!
+        var followerCollectionView:UICollectionView!
+        enum Section {case main}
+        var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
+        var myFollowers=[Follower]()
+        var filteredFollowers=[Follower]()
+        var isFiltered=false
+        
+        
+        var page=1
+        var hasMoreFollowers=true
+        
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            configureFollowersCollectionView()
+            configureVC()
+            getFollowers(for: username, page: page)
+            configureDataSource()
+            configureSearchController()
+        }
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            
+        }
+        private func configureVC(){
+            view.backgroundColor = .systemBackground
+            navigationController?.navigationBar.prefersLargeTitles = true
+        }
+        private func getFollowers(for username:String, page: Int){
+            showLoadingIndicator()
+            NetworkManager.sharedNetworkManager.getFollowers(for: username, page: page) { [weak self](result) in
+                guard let self=self else{ return}
+                self.hideLoadingIndicator()
+                switch result{
+                case .success(let followers):
+                    if followers.count<100{
+                        self.hasMoreFollowers=false
+                    }
+                    self.myFollowers.append(contentsOf: followers)
+                    if self.myFollowers.isEmpty {
+                        DispatchQueue.main.async {
+                            self.showEmptyStateView(with: "This user doesn't have any followers 😃", in: self.view)
+                        }
+                    }
+                    self.updateData(on:self.myFollowers)
+                case .failure(let error):
+                    self.presentGFAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "OK")
+                    
+                }}
+        }
         
     }
-    private func configureVC(){
-        view.backgroundColor = .systemBackground
-        navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    private func getFollowers(){
-        NetworkManager.sharedNetworkManager.getFollowers(for: username, page: 1) { [weak self](result) in
-            guard let self=self else{ return}
-            switch result{
-            case .success(let followers):
-                self.myFollowers=followers
-                self.updateData()
-            case .failure(let error):
-                self.presentGFAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "OK")
-                
-            }}
-    }
-    
-}
-extension FollowersVC{
-    private func configureFollowersCollectionView(){
-        followerCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
+    extension FollowersVC{
+        private func configureFollowersCollectionView(){
+            followerCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
+            followerCollectionView.delegate=self
             view.addSubview(followerCollectionView)
             followerCollectionView.backgroundColor = .systemBackground
-        followerCollectionView.register(FollowerCollectionViewCell.self, forCellWithReuseIdentifier: FollowerCollectionViewCell.reuseID)
+            followerCollectionView.register(FollowerCollectionViewCell.self, forCellWithReuseIdentifier: FollowerCollectionViewCell.reuseID)
         }
         
         
-    /*    func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
-            let width                       = view.bounds.width
-            let padding: CGFloat            = 12
-            let minimumItemSpacing: CGFloat = 10
-            let availableWidth              = width - (padding * 2) - (minimumItemSpacing * 2)
-            let itemWidth                   = availableWidth / 3
+        /*    func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
+         let width                       = view.bounds.width
+         let padding: CGFloat            = 12
+         let minimumItemSpacing: CGFloat = 10
+         let availableWidth              = width - (padding * 2) - (minimumItemSpacing * 2)
+         let itemWidth                   = availableWidth / 3
+         
+         let flowLayout                  = UICollectionViewFlowLayout()
+         flowLayout.sectionInset         = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+         flowLayout.itemSize             = CGSize(width: itemWidth, height: itemWidth + 40)
+         
+         return flowLayout
+         }*/
+        func configureDataSource() {
+            dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: followerCollectionView, cellProvider: { (collectionView, indexPath, follower) -> UICollectionViewCell? in
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCollectionViewCell.reuseID, for: indexPath) as! FollowerCollectionViewCell
+                cell.set(follower: follower)
+                return cell
+            })
+        }
+        
+        
+        func updateData(on followers:[Follower]) {
+            var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(followers)
+            DispatchQueue.main.async { self.dataSource.apply(snapshot, animatingDifferences: true) }
+        }
+    }
+    
+    extension FollowersVC:UICollectionViewDelegate{
+        func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+            let offestY              = scrollView.contentOffset.y
+            let contentHeight        = scrollView.contentSize.height
+            let screenHeight         = scrollView.frame.height
+            let allowableScrolHeight = contentHeight-screenHeight
+            if offestY > allowableScrolHeight{ //scrollable indicator move down
+                if hasMoreFollowers {
+                    page=page+1
+                    getFollowers(for: username, page:page)
+                }
+                
+            }
+        }
+        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            let targetFollowers = isFiltered ? filteredFollowers :myFollowers
+            let userDetailsVC=UserDetailsVC()
+             let navController=UINavigationController(rootViewController: userDetailsVC)
+            userDetailsVC.userName=targetFollowers[indexPath.item].login
+            present(navController, animated: true)
+        }
+    }
+    extension FollowersVC :UISearchResultsUpdating{
+        
+        func configureSearchController(){                                   
+            let searchController                                  = UISearchController()
+            searchController.searchResultsUpdater                 = self
+            searchController.searchBar.placeholder                = "search for a userName"
+            searchController.obscuresBackgroundDuringPresentation = false
+            navigationItem.searchController                       = searchController
+        }
+        func updateSearchResults(for searchController: UISearchController) {
+            guard let searchInput=searchController.searchBar.text,!searchInput.isEmpty else {
+                isFiltered=false
+                self.updateData(on:self.myFollowers)
+                return
+            }
             
-            let flowLayout                  = UICollectionViewFlowLayout()
-            flowLayout.sectionInset         = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
-            flowLayout.itemSize             = CGSize(width: itemWidth, height: itemWidth + 40)
-            
-            return flowLayout
-        }*/
-    func configureDataSource() {
-               dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: followerCollectionView, cellProvider: { (collectionView, indexPath, follower) -> UICollectionViewCell? in
-                   let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCollectionViewCell.reuseID, for: indexPath) as! FollowerCollectionViewCell
-                   cell.set(follower: follower)
-                   return cell
-               })
-           }
-           
-           
-           func updateData() {
-               var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
-               snapshot.appendSections([.main])
-               snapshot.appendItems(myFollowers)
-               DispatchQueue.main.async { self.dataSource.apply(snapshot, animatingDifferences: true) }
-           }
-}
-
-/*extension FollowersVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
-    private func configureFollowersCollectionView(){
-        let flowLayout                         = UICollectionViewFlowLayout()
-        followerCollectionView                 =  UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
-        followerCollectionView.delegate        =  self
-        followerCollectionView.dataSource      =  self
-        followerCollectionView.backgroundColor = .systemPink
+            if searchController.isActive{
+                filteredFollowers = myFollowers.filter {$0.login.lowercased().range(of: searchInput.lowercased()) != nil}
+                if filteredFollowers.isEmpty {
+                    //   self.showEmptyStateView(with: "No folower has a name as input 😀", in:self.view)
+                }
+                isFiltered=true
+                self.updateData(on:self.filteredFollowers)
+            }
+        }
         
-        view.addSubview(followerCollectionView)
-        followerCollectionView.register(FollowerCollectionViewCell.self, forCellWithReuseIdentifier: FollowerCollectionViewCell.reuseID)
-        
-        NSLayoutConstraint.activate([
-            followerCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            followerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            followerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            followerCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
-        ])
         
     }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return myFollowers.count
-    }
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCollectionViewCell.reuseID, for: indexPath) as! FollowerCollectionViewCell
-        cell.set(follower: myFollowers[indexPath.item])
-        return cell
-    }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 70)
-    }
-}*/

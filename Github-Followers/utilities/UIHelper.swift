@@ -23,4 +23,6 @@ struct UIHelper{
              
              return flowLayout
          }
+    //may be put in networkManager
+    static let cache=NSCache<NSString,UIImage>()
 }

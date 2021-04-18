@@ -8,14 +8,25 @@
 
 import Foundation
 
-struct Follower: Codable , Hashable{
+struct Follower: Codable {
+    let uuid = UUID()
+    
    
     
-    var login: String?
-    var avatarUrl: String?
+    var login: String
+    var avatarUrl: String
     
     enum CodingKeys : String , CodingKey {
         case login="login"
         case avatarUrl="avatar_url"
+    }
+}
+extension Follower : Hashable {
+    static func ==(lhs: Follower, rhs: Follower) -> Bool {
+        return lhs.uuid == rhs.uuid
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(uuid)
     }
 }

@@ -11,6 +11,7 @@ struct Constants{
     
     static let LOGO="gh-logo"
     static let BASE_URL="http://api.github.com/users"
+    static let LOCATION_IMAGE="mappin.and.ellipse"
 //https://api.github.com/users/USERNAME/followers
    // https://api.github.com/users/El-Attar1234
 }
