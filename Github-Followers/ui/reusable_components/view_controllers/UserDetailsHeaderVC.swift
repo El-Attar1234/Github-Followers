@@ -60,19 +60,19 @@ class UserDetailsHeaderVC: UIViewController {
         
         NSLayoutConstraint.activate([
             userImage.topAnchor.constraint(equalTo: view.topAnchor, constant: padding),
-            userImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            userImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             userImage.widthAnchor.constraint(equalToConstant: 90),
             userImage.heightAnchor.constraint(equalToConstant: 90),
             
             userName.topAnchor.constraint(equalTo : userImage.topAnchor),
             userName.leadingAnchor.constraint(equalTo: userImage.trailingAnchor, constant: textImageadding),
-            userName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            userName.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             userName.heightAnchor.constraint(equalToConstant: 38),
             
             
             actualName.centerYAnchor.constraint(equalTo: userImage.centerYAnchor , constant: 8),
             actualName.leadingAnchor.constraint(equalTo: userImage.trailingAnchor, constant: textImageadding),
-            actualName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            actualName.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             actualName.heightAnchor.constraint(equalToConstant: 20),
             
             imageLocation.bottomAnchor.constraint(equalTo: userImage.bottomAnchor),
@@ -82,12 +82,12 @@ class UserDetailsHeaderVC: UIViewController {
             
             locationLabel.topAnchor.constraint(equalTo: imageLocation.topAnchor),
             locationLabel.leadingAnchor.constraint(equalTo: imageLocation.trailingAnchor, constant: 5),
-            locationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            locationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             locationLabel.heightAnchor.constraint(equalToConstant: 20),
             
             bioLabel.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: textImageadding),
             bioLabel.leadingAnchor.constraint(equalTo: userImage.leadingAnchor),
-            bioLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            bioLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bioLabel.heightAnchor.constraint(equalToConstant: 60),
             
         ])
