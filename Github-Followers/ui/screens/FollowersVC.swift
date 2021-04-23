@@ -7,6 +7,10 @@
     //
     
     import UIKit
+    protocol nameFollowersVCDelegate: class  {
+        func respondTogetFollowers(for userName:String)
+    }
+    
     
     class FollowersVC: UIViewController {
         var username: String!
@@ -18,23 +22,25 @@
         var isFiltered=false
         
         
-        var page=1
+        var page :Int!
         var hasMoreFollowers=true
         
         override func viewDidLoad() {
             super.viewDidLoad()
             configureFollowersCollectionView()
             configureVC()
-            getFollowers(for: username, page: page)
             configureDataSource()
             configureSearchController()
         }
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
+            page = 1
+            getFollowers(for: username, page: page)
             navigationController?.setNavigationBarHidden(false, animated: true)
             
         }
         private func configureVC(){
+              title = username
             view.backgroundColor = .systemBackground
             navigationController?.navigationBar.prefersLargeTitles = true
         }
@@ -121,6 +127,7 @@
             let userDetailsVC=UserDetailsVC()
              let navController=UINavigationController(rootViewController: userDetailsVC)
             userDetailsVC.userName=targetFollowers[indexPath.item].login
+            userDetailsVC.delegate=self
             present(navController, animated: true)
         }
     }
@@ -148,6 +155,19 @@
                 isFiltered=true
                 self.updateData(on:self.filteredFollowers)
             }
+        }
+        
+        
+    }
+    extension FollowersVC : nameFollowersVCDelegate{
+        func respondTogetFollowers(for userName: String) {
+            self.username = userName
+             title = username
+             myFollowers.removeAll()
+            filteredFollowers.removeAll()
+            updateData(on:self.myFollowers)
+            followerCollectionView.setContentOffset(.zero, animated: true)
+            getFollowers(for: userName, page: page)
         }
         
         

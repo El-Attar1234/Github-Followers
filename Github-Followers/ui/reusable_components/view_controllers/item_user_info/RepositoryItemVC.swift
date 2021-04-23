@@ -10,13 +10,17 @@ import Foundation
 
 class RepositoryItemVC :GeneralItemInfoVC{
     override func viewDidLoad() {
-         super.viewDidLoad()
+        super.viewDidLoad()
         print("didload in specific RepositoryItemVC item")
-     configure()
+        configure()
     }
     private func configure(){
          firstInfoItem.setUpItem(itemType: .repos , withCount: user.publicRepos)
-        secondInfoItem.setUpItem(itemType: .gists, withCount: user.publicGists)
+         secondInfoItem.setUpItem(itemType: .gists, withCount: user.publicGists)
         actionButton.set(backgroundColor: .systemPurple, title: "Github Profile")
+    }
+ 
+    override func actionButtonTapped() {
+        delegate.didTapGitHubProfile(for :user)
     }
 }

@@ -15,10 +15,13 @@ class GeneralItemInfoVC: UIViewController {
       let secondInfoItem=ItemInfoView()
       let actionButton=MyCustomButton()
     
-    var user:User!
-       init(user:User) {
+    var user                 : User!
+    weak var delegate : UserDetailsVCDelegate!
+    
+    init(user:User , delegate:UserDetailsVCDelegate) {
            super.init(nibName:nil, bundle: nil)
-           self.user=user
+           self.user  = user
+        self.delegate = delegate
        }
     
     required init?(coder: NSCoder) {
@@ -28,7 +31,8 @@ class GeneralItemInfoVC: UIViewController {
         super.viewDidLoad()
            configureBackground()
                addSubViews()
-               layoutUI()
+              layoutUI()
+              registerActionButton()
                configureStackView()
     }
     
@@ -56,6 +60,13 @@ class GeneralItemInfoVC: UIViewController {
             
         ])
     }
+    
+
+    private func registerActionButton(){
+        actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+    }
+    @objc func actionButtonTapped(){}
+    
     private func configureStackView(){
         stackView.axis         = .horizontal
         stackView.distribution = .equalSpacing

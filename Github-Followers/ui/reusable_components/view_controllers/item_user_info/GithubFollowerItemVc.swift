@@ -13,10 +13,16 @@ class GithubFollowerItemVc :GeneralItemInfoVC{
         super.viewDidLoad()
         print("didload in specific follower item")
         configure1()
+       
     }
     private func configure1(){
          firstInfoItem.setUpItem(itemType: .followers, withCount: user.followers)
          secondInfoItem.setUpItem(itemType: .following, withCount: user.following)
         actionButton.set(backgroundColor: .systemGreen, title: "Get Followers")
     }
+    override func actionButtonTapped() {
+        delegate.didTapGetFollowers(for :user)
+    }
+
 }
+

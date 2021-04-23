@@ -11,6 +11,8 @@
 
 
 import UIKit
+import SafariServices
+
 fileprivate var containerView:UIView!
 fileprivate var emptyView:EmptyStateView!
 extension UIViewController{
@@ -56,5 +58,12 @@ extension UIViewController{
         emptyView.removeFromSuperview()
         emptyView=nil
         
+    }
+    
+    func goToSafariService(for url : URL){
+        let safariVC=SFSafariViewController(url: url)
+        safariVC.preferredBarTintColor = .systemOrange
+        safariVC.preferredControlTintColor = .systemPurple
+        present(safariVC, animated: true)
     }
 }
