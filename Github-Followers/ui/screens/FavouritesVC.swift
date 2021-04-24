@@ -15,6 +15,16 @@ class FavouritesVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemGreen
     
+        
+        PersistenceManager.retrieveFavorites { (response) in
+            switch response {
+            case .success(let followers):
+                print(followers)
+            case .failure(let error):
+                break
+            }
+        }
+        
     }
     
 

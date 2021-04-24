@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Follower: Codable {
+struct Follower: Codable,Hashable {
     let uuid = UUID()
     
    
@@ -20,7 +20,7 @@ struct Follower: Codable {
         case login="login"
         case avatarUrl="avatar_url"
     }
-}
+}/*
 extension Follower : Hashable {
     static func ==(lhs: Follower, rhs: Follower) -> Bool {
         return lhs.uuid == rhs.uuid
@@ -29,4 +29,4 @@ extension Follower : Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(uuid)
     }
-}
+}*/

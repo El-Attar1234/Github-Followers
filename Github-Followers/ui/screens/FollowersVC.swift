@@ -41,9 +41,16 @@
         }
         private func configureVC(){
               title = username
+            let addButton=UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addToFavourites))
+            navigationItem.rightBarButtonItem=addButton
             view.backgroundColor = .systemBackground
             navigationController?.navigationBar.prefersLargeTitles = true
         }
+        
+        @objc private func addToFavourites(){
+            getUserDetails(for: self.username)
+           }
+        
         private func getFollowers(for username:String, page: Int){
             showLoadingIndicator()
             NetworkManager.sharedNetworkManager.getFollowers(for: username, page: page) { [weak self](result) in
@@ -66,6 +73,40 @@
                     
                 }}
         }
+        
+        
+        private func getUserDetails(for username:String){
+               showLoadingIndicator()
+               NetworkManager.sharedNetworkManager.getUserDetails(for: username) { [weak self](result) in
+                   guard let self=self else{ return}
+                   self.hideLoadingIndicator()
+                   switch result{
+                   case .success(let user):
+                    let follower=Follower(login: user.login, avatarUrl: user.avatarUrl)
+                    PersistenceManager.update(with: follower, type: .add) { (error) in
+                        guard let error = error else{
+                            self.presentGFAlertOnMainThread(title: "Success", message: "You have successfully add this user to favourites", buttonTitle: "Ok")
+                            return
+                        }
+                          self.presentGFAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "OK")
+                        
+                    }
+                    
+                   case .failure(let error):
+                       self.presentGFAlertOnMainThread(title: "Error", message: error.rawValue, buttonTitle: "OK")
+                       
+                   }}
+           }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     }
     extension FollowersVC{
